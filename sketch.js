@@ -1,7 +1,6 @@
 let letters = [];
 let target = "TKUET";
 let collected = "";
-let stars = [];
 let allChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()";
 
 let video;
@@ -11,18 +10,7 @@ let hands = [];
 function setup() {
   createCanvas(windowWidth, windowHeight);
   textFont('Arial');
-  textSize(32);
   noStroke();
-
-  // 初始化星空
-  for (let i = 0; i < 100; i++) {
-    stars.push({
-      x: random(width),
-      y: random(height),
-      size: random(1, 3),
-      brightness: random(100, 255)
-    });
-  }
 
   // 啟用攝影機
   video = createCapture(VIDEO);
@@ -39,38 +27,30 @@ function setup() {
 }
 
 function draw() {
-  // 顯示攝影機畫面
+  // 只顯示鏡頭畫面
   image(video, 0, 0, width, height);
 
-  // 畫星空背景
-  for (let star of stars) {
-    fill(star.brightness);
-    ellipse(star.x, star.y, star.size);
-  }
-
-  // 畫標題文字（加粗並發光）
-  textSize(48);
+  // 畫標題文字（大且明顯）
+  textSize(64);
   textAlign(CENTER);
-  textStyle(BOLD);
-  for (let glow = 10; glow > 0; glow--) {
-    fill(255, 255, 100, 10);
-    text("淡江大學教育科技系", width / 2, 80);
-  }
+  stroke(0);
+  strokeWeight(6);
+  fill(255, 255, 100);
+  text("淡江大學教育科技系", width / 2, 90);
+  noStroke();
   fill(255);
-  text("淡江大學教育科技系", width / 2, 80);
+  text("淡江大學教育科技系", width / 2, 90);
 
-  // 更新並畫掉落的字母
+  // 更新並畫掉落的字母（大且有黑框）
   for (let i = letters.length - 1; i >= 0; i--) {
     let letter = letters[i];
-    fill(255, 255, 255, 200);
-    textSize(32);
+    textSize(72);
+    textAlign(CENTER, CENTER);
+    stroke(0);
+    strokeWeight(4);
+    fill(255, 255, 255, 220);
     text(letter.char, letter.x, letter.y);
-
-    // 畫流星尾巴
-    for (let j = 0; j < 10; j++) {
-      fill(255, 255, 255, 200 - j * 20);
-      ellipse(letter.x - j * 2, letter.y - j * 2, 2);
-    }
+    noStroke();
 
     letter.y += letter.speed;
 
@@ -89,7 +69,7 @@ function draw() {
 
         for (let i = letters.length - 1; i >= 0; i--) {
           let letter = letters[i];
-          if (dist(x, y, letter.x, letter.y) < 20) {
+          if (dist(x, y, letter.x, letter.y) < 36) { // 字變大，碰撞半徑也放大
             if (target.includes(letter.char) && !collected.includes(letter.char)) {
               collected += letter.char;
             }
@@ -100,16 +80,23 @@ function draw() {
     }
   }
 
-  // 顯示收集狀況與通關提示
+  // 顯示收集狀況（大且明顯）
+  textSize(48);
+  textAlign(LEFT, BOTTOM);
+  stroke(0);
+  strokeWeight(4);
+  fill(0, 255, 255);
+  text("已收集: " + collected, 30, height - 30);
+  noStroke();
   fill(255);
-  textSize(24);
-  textAlign(LEFT);
-  text("已收集: " + collected, 20, height - 40);
+  text("已收集: " + collected, 30, height - 30);
 
   if (collected.length === target.length) {
     fill(0, 255, 0);
-    textSize(32);
-    textAlign(CENTER);
+    textSize(64);
+    textAlign(CENTER, CENTER);
+    stroke(0);
+    strokeWeight(6);
     text("通關成功！", width / 2, height / 2);
     noLoop();
   }
@@ -125,7 +112,7 @@ function addLetter() {
   }
   letters.push({
     char: char,
-    x: random(50, width - 50),
+    x: random(80, width - 80),
     y: 0,
     speed: random(1, 6)
   });
